@@ -27,7 +27,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://emofrontend.vercel.app/"],
+    allow_origins=["https://emofrontend.vercel.app"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
