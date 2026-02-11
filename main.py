@@ -8,12 +8,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from googletrans import Translator
 from gtts import gTTS
 
-# -----------------------------
+# --------------------------------------------------
 # Load environment variables
-# -----------------------------
+# --------------------------------------------------
 load_dotenv()
 
 HF_API_KEY = os.getenv("HF_API_KEY")
@@ -21,9 +20,9 @@ HF_MODEL = os.getenv("HF_MODEL")
 
 CHAT_API_URL = "https://router.huggingface.co/v1/chat/completions"
 
-# -----------------------------
+# --------------------------------------------------
 # FastAPI app
-# -----------------------------
+# --------------------------------------------------
 app = FastAPI()
 
 app.add_middleware(
@@ -33,62 +32,83 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# -----------------------------
+# --------------------------------------------------
 # Request schema
-# -----------------------------
+# --------------------------------------------------
 class UserInput(BaseModel):
     text: str
     category: str
     language: str = "en"
 
-# -----------------------------
-# Translator
-# -----------------------------
-translator = Translator()
-
-# -----------------------------
-# Malayalam TTS using Google
-# -----------------------------
-def google_malayalam_tts(text: str) -> str:
+# --------------------------------------------------
+# gTTS helpers
+# --------------------------------------------------
+def malayalam_tts(text: str) -> str:
     mp3_fp = BytesIO()
-    tts = gTTS(text=text, lang="ml")
+    tts = gTTS(text=text, lang="ml", slow=False)
     tts.write_to_fp(mp3_fp)
     mp3_fp.seek(0)
+    return base64.b64encode(mp3_fp.read()).decode("utf-8")
 
-    audio_base64 = base64.b64encode(mp3_fp.read()).decode("utf-8")
-    return audio_base64
 
-# -----------------------------
+def english_tts(text: str) -> str:
+    mp3_fp = BytesIO()
+    tts = gTTS(text=text, lang="en", slow=False)
+    tts.write_to_fp(mp3_fp)
+    mp3_fp.seek(0)
+    return base64.b64encode(mp3_fp.read()).decode("utf-8")
+
+# --------------------------------------------------
 # Core response generator
-# -----------------------------
-def generate_response(user_text: str, category: str, language: str = "en") -> dict:
+# --------------------------------------------------
+def generate_response(user_text: str, category: str, language: str) -> dict:
     headers = {
         "Authorization": f"Bearer {HF_API_KEY}",
         "Content-Type": "application/json",
     }
 
-    # ---------- Malayalam ----------
+    # -----------------------------
+    # Prompts
+    # -----------------------------
     if language == "ml":
-        try:
-            translated = translator.translate(user_text, src="auto", dest="ml")
-            user_text_to_use = translated.text
-        except Exception:
-            user_text_to_use = user_text
+        system_prompt = system_prompt =f"""
+നീ ഉപയോക്താവിന്റെ ഏറ്റവും അടുത്ത ആത്മാർത്ഥ സുഹൃത്താണ്.
 
-        system_prompt = f"""
-നിങ്ങൾ ഒരു സ്നേഹനിറഞ്ഞ വൈകാരിക സഹായിയാണ്.
-എപ്പോഴും സ്വാഭാവിക മലയാളത്തിൽ മാത്രം സംസാരിക്കുക.
-ഒരേ വാക്യങ്ങൾ ആവർത്തിക്കരുത്.
-വൈദ്യപരമായ ഉപദേശങ്ങൾ നൽകരുത്.
+മലയാളത്തിൽ മാത്രം സംസാരിക്കുക.
+കണ്ണൂർ സ്ലാങ് ഉപയോഗിച്ച് വളരെ ലളിതമായ സംസാര ഭാഷയിൽ മറുപടി നൽകുക.
+കഠിനമായ മലയാളം വാക്കുകളും പുസ്തക ശൈലിയുമൊന്നും ഉപയോഗിക്കരുത്.
 
-വിഷയം: {category}
+സ്നേഹത്തോടും കരുതലോടും സംസാരിക്കുക.
+ഉപയോക്താവിനെ കുറ്റപ്പെടുത്തരുത്.
+ധൈര്യവും ആശ്വാസവും നൽകുന്ന രീതിയിൽ മറുപടി നൽകുക.
+ഉപയോക്താവിന് ഇപ്പോൾ സഹായം വേണ്ട വിഷയം: {category}
 """
+
+
     else:
-        user_text_to_use = user_text
         system_prompt = f"""
-You are a kind emotional assistant.
+You are the user’s close friend.
+
+Reply in a warm, friendly, and natural tone,
+like talking to someone you genuinely care about.
+Do not sound formal, robotic, or like a book.
+
+Use simple, clear language.
+Talk the way a close friend would speak in real life.
+
+You may answer briefly or at length,
+but only say as much as you can say clearly and completely.
+
+Do NOT stop in the middle of a sentence.
+Do NOT stop in the middle of an idea.
+If you feel you are nearing the end,
+finish the current thought naturally and then stop.
+
+The final sentence must feel complete and natural,
+not cut off or unfinished.
+
 Do not repeat phrases.
-No medical advice.
+Do not give medical advice.
 
 Focus: {category}
 """
@@ -97,31 +117,46 @@ Focus: {category}
         "model": HF_MODEL,
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_text_to_use},
+            {"role": "user", "content": user_text},
         ],
         "temperature": 0.9,
-        "max_tokens": 200,
+        "max_tokens": 500,
     }
 
-    r = requests.post(CHAT_API_URL, headers=headers, json=payload, timeout=60)
-    data = r.json()
+    # -----------------------------
+    # HuggingFace request
+    # -----------------------------
+    r = requests.post(
+        CHAT_API_URL,
+        headers=headers,
+        json=payload,
+        timeout=60
+    )
 
+    data = r.json()
     reply = data["choices"][0]["message"]["content"]
 
-    # ---------- Generate voice if Malayalam ----------
+    # -----------------------------
+    # Audio generation
+    # -----------------------------
     if language == "ml":
-        audio = google_malayalam_tts(reply)
-        return {
-            "response": reply,
-            "audio": audio,
-            "audio_format": "mp3"
-        }
+        audio = malayalam_tts(reply)
+    else:
+        audio = english_tts(reply)
 
-    return {"response": reply}
+    return {
+        "response": reply,
+        "audio": audio,
+        "audio_format": "mp3"
+    }
 
-# -----------------------------
+# --------------------------------------------------
 # API endpoint
-# -----------------------------
+# --------------------------------------------------
 @app.post("/analyze")
 async def analyze(data: UserInput):
-    return generate_response(data.text, data.category, data.language)
+    return generate_response(
+        data.text,
+        data.category,
+        data.language
+    )
