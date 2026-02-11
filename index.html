@@ -5,15 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -23,71 +19,55 @@
     }
 
     .container {
-      background: white;
+      background: #1e1e2f;
       border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
       padding: 40px;
       max-width: 500px;
       width: 100%;
       position: relative;
       overflow: hidden;
       z-index: 10;
+      border: 1px solid #2a2a4a;
     }
 
     .container::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 4px;
       background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
     }
 
-    h2 {
-      color: #2d3748;
-      font-size: 28px;
-      margin-bottom: 24px;
-      text-align: center;
-      font-weight: 600;
-    }
+    h2 { color: #e2e8f0; font-size: 28px; margin-bottom: 24px; text-align: center; font-weight: 600; }
 
-    .emoji {
-      font-size: 36px;
-      display: inline-block;
-      animation: float 3s ease-in-out infinite;
-    }
+    .emoji { font-size: 36px; display: inline-block; animation: float 3s ease-in-out infinite; }
 
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(-10px); }
     }
 
-    .input-group {
-      margin-bottom: 24px;
-    }
-
     textarea {
       width: 100%;
       padding: 16px;
-      border: 2px solid #e2e8f0;
+      border: 2px solid #2a2a4a;
       border-radius: 12px;
       font-size: 15px;
       font-family: inherit;
       resize: vertical;
       transition: all 0.3s ease;
-      background: #f7fafc;
+      background: #151525;
+      color: #e2e8f0;
+      margin-bottom: 24px;
     }
+
+    textarea::placeholder { color: #555; }
 
     textarea:focus {
       outline: none;
       border-color: #667eea;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .categories {
-      margin-bottom: 28px;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
     }
 
     .category-label {
@@ -97,43 +77,36 @@
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.2s ease;
-      background: #f7fafc;
+      background: #151525;
       border: 2px solid transparent;
       position: relative;
       padding-left: 44px;
     }
 
-    .category-label:hover {
-      background: #edf2f7;
-      transform: translateX(4px);
-    }
+    .category-label:hover { background: #1a1a35; transform: translateX(4px); }
 
     input[type="radio"] {
       position: absolute;
-      left: 16px;
-      top: 50%;
+      left: 16px; top: 50%;
       transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
+      width: 18px; height: 18px;
       cursor: pointer;
       accent-color: #667eea;
     }
 
-    input[type="radio"]:checked + .category-text {
-      color: #667eea;
-      font-weight: 600;
-    }
+    input[type="radio"]:checked + .category-text { color: #667eea; font-weight: 600; }
 
-    .category-label:has(input:checked) {
-      background: #eef2ff;
-      border-color: #667eea;
-    }
+    .category-label:has(input:checked) { background: rgba(102, 126, 234, 0.1); border-color: #667eea; }
 
-    .category-text {
-      color: #4a5568;
-      font-size: 15px;
-      transition: all 0.2s ease;
-    }
+    .category-text { color: #8892b0; font-size: 15px; transition: all 0.2s ease; }
+
+    .categories { margin-bottom: 20px; }
+
+    .language-selection { display: flex; gap: 10px; margin-bottom: 28px; }
+
+    .language-selection .category-label { flex: 1; text-align: center; padding-left: 16px; }
+
+    .language-selection input[type="radio"] { display: none; }
 
     button {
       width: 100%;
@@ -146,316 +119,176 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.35);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(102, 126, 234, 0.5); }
+    button:active { transform: translateY(0); }
 
-    button:active {
-      transform: translateY(0);
-    }
-
-    .loading {
-      display: none;
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .loading.show {
-      display: block;
-    }
-
-    .loading-dots {
-      display: inline-block;
-    }
+    .loading { display: none; text-align: center; margin-top: 20px; }
+    .loading.show { display: block; }
 
     .loading-dots span {
       display: inline-block;
-      width: 8px;
-      height: 8px;
+      width: 8px; height: 8px;
       border-radius: 50%;
       background: #667eea;
       margin: 0 3px;
       animation: bounce 1.4s ease-in-out infinite;
     }
 
-    .loading-dots span:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .loading-dots span:nth-child(3) {
-      animation-delay: 0.4s;
-    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
 
     @keyframes bounce {
       0%, 60%, 100% { transform: translateY(0); }
       30% { transform: translateY(-10px); }
     }
 
-    /* Robot Character */
-    .robot-character {
+    /* Character container - slightly larger */
+    .character-container {
       position: fixed;
-      right: -400px;
-      bottom: 50px;
-      width: 300px;
+      right: -450px;
+      bottom: 40px;
+      width: 360px;
       transition: right 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       z-index: 1000;
     }
 
-    .robot-character.show {
-      right: 30px;
-    }
+    .character-container.show { right: 30px; }
 
-    .robot-body {
+    .image-wrapper {
       position: relative;
-      width: 200px;
-      height: 240px;
-      background: linear-gradient(145deg, #5a67d8, #764ba2);
-      border-radius: 30px;
+      width: 260px;
+      height: 370px;
       margin: 0 auto;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-      animation: robotFloat 3s ease-in-out infinite;
+      animation: float 3s ease-in-out infinite;
     }
 
-    @keyframes robotFloat {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-15px); }
-    }
-
-    .robot-antenna {
-      position: absolute;
-      top: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 4px;
-      height: 25px;
-      background: #4a5568;
-      border-radius: 2px;
-    }
-
-    .robot-antenna::after {
-      content: '';
-      position: absolute;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 12px;
-      height: 12px;
-      background: #f093fb;
-      border-radius: 50%;
-      box-shadow: 0 0 15px #f093fb;
-      animation: antennaBlink 2s ease-in-out infinite;
-    }
-
-    @keyframes antennaBlink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .robot-head {
-      position: relative;
-      width: 140px;
-      height: 120px;
-      background: linear-gradient(145deg, #6b7fd8, #8b5fc7);
-      border-radius: 20px;
-      margin: 0 auto;
-      padding-top: 20px;
-    }
-
-    .robot-eyes {
-      display: flex;
-      justify-content: space-around;
-      padding: 0 25px;
-      margin-bottom: 15px;
-    }
-
-    .robot-eye {
-      width: 30px;
-      height: 30px;
-      background: white;
-      border-radius: 50%;
-      position: relative;
-      animation: blink 4s ease-in-out infinite;
-    }
-
-    .robot-eye::after {
-      content: '';
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      width: 14px;
-      height: 14px;
-      background: #2d3748;
-      border-radius: 50%;
-      animation: eyeMove 3s ease-in-out infinite;
-    }
-
-    @keyframes blink {
-      0%, 96%, 100% { transform: scaleY(1); }
-      98% { transform: scaleY(0.1); }
-    }
-
-    @keyframes eyeMove {
-      0%, 100% { transform: translate(0, 0); }
-      25% { transform: translate(3px, 0); }
-      50% { transform: translate(0, 3px); }
-      75% { transform: translate(-3px, 0); }
-    }
-
-    .robot-mouth {
-      position: relative;
-      width: 60px;
-      height: 20px;
-      margin: 0 auto;
-      overflow: hidden;
-    }
-
-    .mouth-shape {
-      position: absolute;
+    /* Bluish glowing border effect */
+    .character-video {
       width: 100%;
       height: 100%;
-      background: #2d3748;
-      border-radius: 0 0 30px 30px;
-      transition: all 0.1s ease;
+      object-fit: contain;
+      border-radius: 20px;
+      border: 2px solid rgba(102, 126, 234, 0.6);
+      box-shadow: 
+        0 0 15px rgba(102, 126, 234, 0.4),
+        0 0 30px rgba(102, 126, 234, 0.2),
+        inset 0 0 15px rgba(102, 126, 234, 0.1);
     }
 
-    .mouth-shape.talking {
-      animation: lipSync 0.15s ease-in-out infinite;
-    }
-
-    @keyframes lipSync {
-      0%, 100% { 
-        height: 8px;
-        border-radius: 0 0 30px 30px;
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow: 
+          0 0 15px rgba(102, 126, 234, 0.4),
+          0 0 30px rgba(102, 126, 234, 0.2),
+          inset 0 0 15px rgba(102, 126, 234, 0.1);
+        border-color: rgba(102, 126, 234, 0.6);
       }
-      50% { 
-        height: 20px;
-        border-radius: 30px;
+      50% {
+        box-shadow: 
+          0 0 20px rgba(102, 126, 234, 0.6),
+          0 0 40px rgba(102, 126, 234, 0.3),
+          inset 0 0 20px rgba(102, 126, 234, 0.15);
+        border-color: rgba(102, 126, 234, 0.8);
       }
     }
 
-    .robot-chest {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .character-video.speaking {
+      animation: glowPulse 2s ease-in-out infinite;
     }
 
-    .robot-chest::after {
-      content: '♥';
-      font-size: 24px;
-      color: #f093fb;
-      animation: heartbeat 1.5s ease-in-out infinite;
-    }
+    /* Mouth overlay - positioned at bottom center of character */
+    
 
-    @keyframes heartbeat {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
-
-    .robot-arms {
-      position: absolute;
-      top: 140px;
-      width: 100%;
-    }
-
-    .robot-arm {
-      position: absolute;
-      width: 20px;
-      height: 80px;
-      background: linear-gradient(145deg, #5a67d8, #764ba2);
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .robot-arm.left {
-      left: -10px;
-      animation: armWaveLeft 2s ease-in-out infinite;
-    }
-
-    .robot-arm.right {
-      right: -10px;
-      animation: armWaveRight 2s ease-in-out infinite;
-    }
-
-    @keyframes armWaveLeft {
-      0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(-15deg); }
-    }
-
-    @keyframes armWaveRight {
-      0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(15deg); }
-    }
-
+    /* Speech bubble */
     .speech-bubble {
       position: absolute;
       left: -280px;
-      top: 20px;
+      top: 10px;
       max-width: 250px;
-      background: white;
+      background: #1e1e2f;
       padding: 16px 20px;
       border-radius: 20px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      border: 1px solid #2a2a4a;
       opacity: 0;
       transform: scale(0.8);
       transition: all 0.4s ease;
     }
 
-    .speech-bubble.show {
-      opacity: 1;
-      transform: scale(1);
-    }
+    .speech-bubble.show { opacity: 1; transform: scale(1); }
 
     .speech-bubble::after {
       content: '';
       position: absolute;
       right: -10px;
       top: 30px;
-      width: 0;
-      height: 0;
-      border-left: 15px solid white;
+      width: 0; height: 0;
+      border-left: 15px solid #1e1e2f;
       border-top: 10px solid transparent;
       border-bottom: 10px solid transparent;
     }
 
-    .speech-bubble-text {
-      color: #2d3748;
-      font-size: 14px;
-      line-height: 1.6;
-    }
+    .speech-bubble-text { color: #e2e8f0; font-size: 14px; line-height: 1.6; }
 
     @media (max-width: 900px) {
-      .robot-character {
-        display: none;
-      }
-
-      .container {
-        max-width: 100%;
-      }
+      .character-container { display: none; }
+      .container { max-width: 100%; }
     }
 
     @media (max-width: 600px) {
-      .container {
-        padding: 24px;
-      }
-
-      h2 {
-        font-size: 24px;
-      }
+      .container { padding: 24px; }
+      h2 { font-size: 24px; }
     }
+    .bot-name {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 6px 18px;
+  border-radius: 12px;
+  background: #151525;
+  border: 2px solid rgba(102, 126, 234, 0.6);
+  color: #e2e8f0;
+  overflow: hidden;
+}
+
+/* Light sweep layer */
+.bot-name::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(102, 126, 234, 0.2) 30%,
+    rgba(102, 126, 234, 0.9) 50%,
+    rgba(102, 126, 234, 0.2) 70%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+}
+
+/* Animate ONLY when speaking */
+.bot-name.speaking::before {
+  animation: moveGlow 2s linear infinite;
+}
+
+@keyframes moveGlow {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
   </style>
 </head>
 <body>
@@ -463,9 +296,7 @@
 <div class="container">
   <h2><span class="emoji">🤖</span> Emotional AI Assistant</h2>
 
-  <div class="input-group">
-    <textarea id="text" rows="5" placeholder="Describe what you are feeling..."></textarea>
-  </div>
+  <textarea id="text" rows="5" placeholder="Describe what you are feeling..."></textarea>
 
   <div class="categories">
     <label class="category-label">
@@ -490,7 +321,7 @@
     </label>
     <label class="category-label">
       <input type="radio" name="cat" value="better living">
-      <span class="category-text">Better Living</span>
+      <span class="category-text"> What to do for Better Living</span>
     </label>
   </div>
 
@@ -509,388 +340,119 @@
 
   <div class="loading" id="loading">
     <div class="loading-dots">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </div>
   </div>
 </div>
 
-<!-- Animated Robot Character -->
-<div class="robot-character" id="robotCharacter">
+<!-- Character Panel -->
+<div class="character-container" id="characterContainer">
   <div class="speech-bubble" id="speechBubble">
     <div class="speech-bubble-text" id="speechText"></div>
   </div>
-  
-  <div class="robot-body">
-    <div class="robot-antenna"></div>
-    
-    <div class="robot-head">
-      <div class="robot-eyes">
-        <div class="robot-eye"></div>
-        <div class="robot-eye"></div>
-      </div>
-      <div class="robot-mouth">
-        <div class="mouth-shape" id="robotMouth"></div>
-      </div>
-    </div>
-    
-    <div class="robot-chest"></div>
-    
-    <div class="robot-arms">
-      <div class="robot-arm left"></div>
-      <div class="robot-arm right"></div>
-    </div>
+
+  <div class="image-wrapper">
+    <div class="bot-name" id="botName">Veloria</div><br>
+    <video class="character-video" id="characterVideo" loop muted playsinline autoplay
+           src="IMG_8261.MP4.webm"></video>
+
+    <!-- <div class="mouth-overlay">
+      <div class="mouth-shape" id="mouthShape"></div>
+    </div> -->
   </div>
 </div>
 
 <script>
-let currentUtterance = null;
+const mouth = document.getElementById('mouthShape');
+const video = document.getElementById('characterVideo');
 
-// Load voices when page loads
-window.speechSynthesis.onvoiceschanged = function() {
-  window.speechSynthesis.getVoices();
-};
-
-// Initial voice load
-if (speechSynthesis.onvoiceschanged !== undefined) {
-  speechSynthesis.onvoiceschanged = function() {
-    speechSynthesis.getVoices();
-  };
+function startTalking() {
+  video.classList.add('speaking');
 }
 
-// Debug function to list available voices
-function listAvailableVoices() {
-  const voices = window.speechSynthesis.getVoices();
-  console.log('Available voices:');
-  voices.forEach((voice, index) => {
-    console.log(`${index}: ${voice.name} (${voice.lang})`);
-  });
+function stopTalking() {
+  video.classList.remove('speaking');
+}
+function hideCharacter() {
+  document.getElementById('characterContainer').classList.remove('show');
+  document.getElementById('speechBubble').classList.remove('show');
 }
 
-// Call this after page loads to see available voices
-setTimeout(listAvailableVoices, 1000);
-
-// Manglish to Malayalam transliteration map
-const manglishToMalayalam = {
-  'aa': 'ആ', 'ae': 'എ', 'ai': 'ഐ', 'au': 'ഔ', 'ee': 'ഈ', 'ei': 'ഏ',
-  'ii': 'ഈ', 'oo': 'ഊ', 'ou': 'ഔ', 'uu': 'ഊ',
-  'ka': 'ക', 'kha': 'ഖ', 'ga': 'ഗ', 'gha': 'ഘ', 'nga': 'ങ',
-  'cha': 'ച', 'chha': 'ഛ', 'ja': 'ജ', 'jha': 'ഝ', 'nya': 'ഞ',
-  'ta': 'ട', 'tha': 'ഠ', 'da': 'ഡ', 'dha': 'ഢ', 'na': 'ണ',
-  'tha2': 'ത', 'thha': 'ഥ', 'da2': 'ദ', 'dhha': 'ധ', 'ma': 'മ',
-  'pa': 'പ', 'pha': 'ഫ', 'ba': 'ബ', 'bha': 'ഭ', 'ma2': 'മ',
-  'ya': 'യ', 'ra': 'ര', 'la': 'ല', 'va': 'വ', 'sha': 'ശ',
-  'ssa': 'ഷ', 'sa': 'സ', 'ha': 'ഹ', 'la2': 'ള', 'zha': 'ഴ',
-  'a': 'അ', 'e': 'എ', 'i': 'ഇ', 'o': 'ഒ', 'u': 'ഉ',
-  'k': 'ക്', 'g': 'ഗ്', 'c': 'ച്', 'j': 'ജ്', 't': 'റ്റ്',
-  'd': 'ഡ്', 'n': 'ന്', 'p': 'പ്', 'b': 'ബ്', 'm': 'മ്',
-  'y': 'യ്', 'r': 'ര്', 'l': 'ല്', 'v': 'വ്', 's': 'സ്',
-  'h': 'ഹ്', 'f': 'ഫ്', 'q': 'ഖ്', 'x': 'ക്സ്', 'w': 'വ്'
-};
-
-// Convert Manglish to Malayalam
-function convertManglishToMalayalam(text) {
-  let converted = text.toLowerCase();
-  
-  // Replace common Manglish patterns
-  Object.keys(manglishToMalayalam).forEach(key => {
-    const regex = new RegExp(key, 'g');
-    converted = converted.replace(regex, manglishToMalayalam[key]);
-  });
-
-  return converted;
-}
-
-// Enhanced Malayalam speech with optimized browser TTS
-async function speakText(text) {
-  // Cancel any ongoing speech
+function speakText(text, language) {
   window.speechSynthesis.cancel();
-  
   const msg = new SpeechSynthesisUtterance(text);
-  const selectedLanguage = document.querySelector('input[name="language"]:checked');
-  const language = selectedLanguage ? selectedLanguage.value : "en";
+  const voices = window.speechSynthesis.getVoices();
 
-  if (language === "ml") {
-    // Optimized settings for Malayalam
-    msg.text = text;
-    msg.lang = "ml-IN";
-    msg.rate = 0.75; // Slightly slower for clarity
-    msg.pitch = 1.4; // Higher pitch for expressive Malayalam
-    msg.volume = 1.0;
-    
-    // Get all available voices
-    const voices = window.speechSynthesis.getVoices();
-    let malayalamVoice = null;
-    
-    console.log('All available voices:', voices.map(v => `${v.name} (${v.lang})`));
-    
-    // Priority 1: Exact Malayalam voices
-    malayalamVoice = voices.find(voice => 
-      voice.lang.includes('ml-IN') || 
-      voice.lang.includes('ml') ||
-      voice.name.toLowerCase().includes('malayalam')
-    );
-    
-    // Priority 2: Hindi voices (better for Indian languages)
-    if (!malayalamVoice) {
-      malayalamVoice = voices.find(voice => 
-        voice.lang.includes('hi-IN') || 
-        voice.name.toLowerCase().includes('hindi')
-      );
-    }
-    
-    // Priority 3: Any Indian voice
-    if (!malayalamVoice) {
-      malayalamVoice = voices.find(voice => 
-        voice.lang.includes('IN') || 
-        voice.name.toLowerCase().includes('india')
-      );
-    }
-    
-    // Priority 4: Premium voices (often better quality)
-    if (!malayalamVoice) {
-      malayalamVoice = voices.find(voice => 
-        voice.name.toLowerCase().includes('premium') ||
-        voice.name.toLowerCase().includes('neural') ||
-        voice.name.toLowerCase().includes('enhanced')
-      );
-    }
-    
-    // Priority 5: Any voice as final fallback
-    if (!malayalamVoice && voices.length > 0) {
-      malayalamVoice = voices[0];
-    }
-    
-    if (malayalamVoice) {
-      msg.voice = malayalamVoice;
-      console.log('Using optimized Malayalam voice:', malayalamVoice.name, malayalamVoice.lang);
-    } else {
-      console.log('No suitable voice found, using default');
-    }
-    
-    console.log('Speaking optimized Malayalam text:', text);
-    
-    // Enhanced mouth animation for Malayalam
-    const mouth = document.getElementById('robotMouth');
-    let speechTimeout;
-    let restartAttempts = 0;
-    const maxRestartAttempts = 3;
-    
-    function restartSpeech() {
-      if (restartAttempts < maxRestartAttempts) {
-        restartAttempts++;
-        console.log(`Restarting speech attempt ${restartAttempts}`);
-        setTimeout(() => {
-          try {
-            window.speechSynthesis.speak(msg);
-          } catch (error) {
-            console.error('Restart speech error:', error);
-          }
-        }, 100);
-      } else {
-        console.error('Max restart attempts reached');
-        mouth.classList.remove('talking');
-      }
-    }
-    
-    msg.onstart = function() {
-      console.log('Optimized Malayalam speech started successfully');
-      mouth.classList.add('talking');
-      restartAttempts = 0;
-      clearTimeout(speechTimeout);
-      
-      // Enhanced mouth animation for Malayalam
-      mouth.style.animation = 'malayalamPulse 1.5s ease-in-out infinite';
-    };
-    
-    msg.onend = function() {
-      console.log('Optimized Malayalam speech ended naturally');
-      mouth.classList.remove('talking');
-      mouth.style.animation = '';
-      clearTimeout(speechTimeout);
-    };
-    
-    msg.onerror = function(event) {
-      console.error('Optimized Malayalam speech error:', event.error);
-      mouth.classList.remove('talking');
-      mouth.style.animation = '';
-      clearTimeout(speechTimeout);
-      
-      if (event.error === 'network' || event.error === 'language-unavailable') {
-        console.log('Attempting to restart speech due to error:', event.error);
-        restartSpeech();
-      }
-    };
-    
-    msg.onboundary = function(event) {
-      if (event.name === 'word') {
-        mouth.style.transform = 'scale(' + (0.9 + Math.random() * 0.3) + ')';
-        setTimeout(() => {
-          mouth.style.transform = 'scale(1)';
-        }, 100);
-      }
-    };
-
-    // Add timeout to detect if speech gets stuck
-    speechTimeout = setTimeout(() => {
-      if (window.speechSynthesis.speaking) {
-        console.log('Optimized Malayalam speech appears to be stuck, restarting...');
-        window.speechSynthesis.cancel();
-        restartSpeech();
-      }
-    }, 5000);
-
-    // Speak with enhanced error handling
-    try {
-      window.speechSynthesis.speak(msg);
-    } catch (error) {
-      console.error('Optimized Malayalam speech synthesis error:', error);
-      mouth.classList.remove('talking');
-      mouth.style.animation = '';
-      clearTimeout(speechTimeout);
-    }
+  if (language === 'ml') {
+    msg.lang = 'ml-IN'; msg.rate = 0.85; msg.pitch = 1.15;
+    const v = voices.find(v => v.lang.includes('ml')) || voices.find(v => v.lang.includes('hi-IN')) || voices[0];
+    if (v) msg.voice = v;
   } else {
-    // For English, use standard settings
-    msg.lang = "en-US";
-    msg.rate = 0.9;
-    msg.pitch = 1.0;
-    msg.volume = 1.0;
-    console.log('Speaking English:', text);
-    
-    // Standard mouth animation for English
-    const mouth = document.getElementById('robotMouth');
-    let speechTimeout;
-    let restartAttempts = 0;
-    const maxRestartAttempts = 3;
-    
-    function restartSpeech() {
-      if (restartAttempts < maxRestartAttempts) {
-        restartAttempts++;
-        console.log(`Restarting speech attempt ${restartAttempts}`);
-        setTimeout(() => {
-          try {
-            window.speechSynthesis.speak(msg);
-          } catch (error) {
-            console.error('Restart speech error:', error);
-          }
-        }, 100);
-      } else {
-        console.error('Max restart attempts reached');
-        mouth.classList.remove('talking');
-      }
-    }
-    
-    msg.onstart = function() {
-      console.log('English speech started successfully');
-      mouth.classList.add('talking');
-      restartAttempts = 0;
-      clearTimeout(speechTimeout);
-    };
-    
-    msg.onend = function() {
-      console.log('English speech ended naturally');
-      mouth.classList.remove('talking');
-      mouth.style.animation = '';
-      clearTimeout(speechTimeout);
-    };
-    
-    msg.onerror = function(event) {
-      voice.error('English speech error:', event.error);
-      mouth.classList.remove('talking');
-      mouth.style.animation = '';
-      clearTimeout(speechTimeout);
-      
-      if (event.error === 'network' || event.error === 'language-unavailable') {
-        console.log('Attempting to restart speech due to error:', event.error);
-        restartSpeech();
-      }
-    };
-    
-    msg.onboundary = function(event) {
-      if (event.name === 'word') {
-        mouth.style.transform = 'scale(' + (0.9 + Math.random() * 0.2) + ')';
-        setTimeout(() => {
-          mouth.style.transform = 'scale(1)';
-        }, 100);
-      }
-    };
-
-    // Add timeout to detect if speech gets stuck
-    speechTimeout = setTimeout(() => {
-      if (window.speechSynthesis.speaking) {
-        console.log('English speech appears to be stuck, restarting...');
-        window.speechSynthesis.cancel();
-        restartSpeech();
-      }
-    }, 5000);
-
-    // Speak with enhanced error handling
-    try {
-      window.speechSynthesis.speak(msg);
-    } catch (error) {
-      console.error('English speech synthesis error:', error);
-      mouth.classList.remove('t');
-      clearTimeout(speechTimeout);
-    }
+    msg.lang = 'en-US'; msg.pitch = 1.5; msg.rate = 5.0;
+    const v = voices.find(v => v.lang.includes('en') && (v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('alex')));
+    if (v) msg.voice = v;
   }
+
+  msg.onstart = startTalking;
+  msg.onend = stopTalking;
+  msg.onerror = stopTalking;
+
+  try { window.speechSynthesis.speak(msg); } catch(e) { stopTalking(); }
 }
 
 function send() {
-  const text = document.getElementById("text").value;
-  const checkedRadio = document.querySelector('input[name="cat"]:checked');
-  const selectedLanguage = document.querySelector('input[name="language"]:checked');
-  
-  if (!text.trim()) {
-    alert('Please describe your feelings');
-    return;
-  }
-  
-  if (!checkedRadio) {
-    alert('Please select a category');
-    return;
-  }
-  
-  const category = checkedRadio.value;
-  const language = selectedLanguage ? selectedLanguage.value : "en";
-  
-  // Show loading
-  document.getElementById("loading").classList.add("show");
-  document.getElementById("robotCharacter").classList.remove("show");
-  document.getElementById("speechBubble").classList.remove("show");
+  const text = document.getElementById('text').value;
+  const cat = document.querySelector('input[name="cat"]:checked');
+  const lang = document.querySelector('input[name="language"]:checked');
 
-  fetch("http://127.0.0.1:8000/analyze", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ text, category, language })
+  if (!text.trim()) { alert('Please describe your feelings'); return; }
+  if (!cat) { alert('Please select a category'); return; }
+
+  const language = lang ? lang.value : 'en';
+
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('characterContainer').classList.remove('show');
+  document.getElementById('speechBubble').classList.remove('show');
+  stopTalking();
+
+  fetch('http://127.0.0.1:8000/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, category: cat.value, language })
   })
   .then(res => res.json())
   .then(data => {
-    // Hide loading
-    document.getElementById("loading").classList.remove("show");
-    
-    // Show robot from right side
-    const robotChar = document.getElementById("robotCharacter");
-    const speechBubble = document.getElementById("speechBubble");
-    const speechText = document.getElementById("speechText");
-    
-    robotChar.classList.add("show");
-    
-    // Show speech bubble after robot slides in
-    setTimeout(() => {
-      speechText.textContent = data.response;
-      speechBubble.classList.add("show");
-      
-      // Start speaking with lip sync
-      speakText(data.response);
-    }, 800);
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('characterContainer').classList.add('show');
+    document.getElementById('speechText').textContent = data.response;
+    document.getElementById('speechBubble').classList.add('show');
+
+    if (data.audio) {
+      const audio = new Audio('data:audio/mp3;base64,' + data.audio);
+      audio.playbackRate = 1.3;
+      audio.preservesPitch = true;
+      audio.onplay = startTalking;
+      audio.onended = () => {
+        stopTalking();
+        hideCharacter();
+      };
+      audio.onerror = () => {
+        stopTalking();
+        hideCharacter();
+      };
+      audio.play();
+    } else {
+      speakText(data.response, language);
+    }
   })
-  .catch(error => {
-    document.getElementById("loading").classList.remove("show");
+  .catch(() => {
+    document.getElementById('loading').classList.remove('show');
+    stopTalking();
     alert('Error connecting to the server. Please try again.');
-    console.error('Error:', error);
   });
 }
+
+window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 </script>
 </body>
 </html>
