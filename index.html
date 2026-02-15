@@ -149,23 +149,23 @@
 
     /* Character container - slightly larger */
     .character-container {
-      position: fixed;
-      right: -450px;
-      bottom: 40px;
-      width: 360px;
-      transition: right 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      z-index: 1000;
-    }
+  position: fixed;
+  right: -450px;
+  bottom: 40px;
+  width: clamp(220px, 25vw, 360px); /* responsive width */
+  transition: right 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 1000;
+}
 
     .character-container.show { right: 30px; }
 
     .image-wrapper {
-      position: relative;
-      width: 260px;
-      height: 370px;
-      margin: 0 auto;
-      animation: float 3s ease-in-out infinite;
-    }
+  position: relative;
+  width: 100%;              /* responsive */
+  aspect-ratio: 2 / 3;      /* keeps proper shape */
+  margin: 0 auto;
+  animation: float 3s ease-in-out infinite;
+}
 
     /* Bluish glowing border effect */
     .character-video {
@@ -236,23 +236,27 @@
     .speech-bubble-text { color: #e2e8f0; font-size: 14px; line-height: 1.6; }
 
     @media (max-width: 900px) {
-      .character-container { display: none; }
-      .container { max-width: 100%; }
-    }
+  .character-container {
+    right: 10px;
+    bottom: 10px;
+    width: 200px; /* smaller but visible */
+  }
+  .container { max-width: 100%; }
+}
 
     @media (max-width: 600px) {
       .container { padding: 24px; }
       h2 { font-size: 24px; }
     }
-    .bot-name {
+   .bot-name {
   position: absolute;
-  top: -35px;
+  top: -30px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 22px;
+  font-size: clamp(14px, 1.5vw, 22px); /* responsive text */
   font-weight: 700;
   letter-spacing: 1px;
-  padding: 6px 18px;
+  padding: 6px 16px;
   border-radius: 12px;
   background: #151525;
   border: 2px solid rgba(102, 126, 234, 0.6);
